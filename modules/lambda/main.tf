@@ -38,6 +38,10 @@ resource "aws_lambda_function" "main" {
   handler          = "index.handler"
   runtime          = "python3.12"
   timeout          = 60
+
+  tracing_config {
+    mode = "Active"
+  }
 }
 
 resource "aws_cloudwatch_log_group" "lambda" {

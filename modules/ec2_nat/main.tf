@@ -18,6 +18,7 @@ resource "aws_security_group" "nat" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = [var.vpc_cidr]
+    description = "Allow all traffic from VPC"
   }
 
   egress {
@@ -25,6 +26,7 @@ resource "aws_security_group" "nat" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound for NAT"
   }
 }
 
@@ -45,6 +47,16 @@ resource "aws_instance" "nat" {
     service iptables save
     systemctl enable iptables
   EOF
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
+
+  root_block_device {
+    encrypted = true
+  }
 
   tags = { Name = "${var.project_name}-${var.environment}-nat" }
 }

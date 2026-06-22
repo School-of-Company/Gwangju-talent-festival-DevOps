@@ -18,6 +18,7 @@ resource "aws_security_group" "bastion" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = [var.allowed_cidr]
+    description = "Allow SSH from allowed CIDR"
   }
 
   egress {
@@ -25,6 +26,7 @@ resource "aws_security_group" "bastion" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
   }
 }
 
@@ -34,6 +36,16 @@ resource "aws_instance" "bastion" {
   subnet_id              = var.public_subnet_id
   key_name               = var.key_pair_name
   vpc_security_group_ids = [aws_security_group.bastion.id]
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
+
+  root_block_device {
+    encrypted = true
+  }
 
   tags = { Name = "${var.project_name}-${var.environment}-bastion" }
 }
