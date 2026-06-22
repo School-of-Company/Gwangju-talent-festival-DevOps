@@ -1,0 +1,39 @@
+project_name = "gwangtalpae"
+environment  = "dev"
+aws_region   = "ap-northeast-2"
+
+vpc_cidr             = "10.0.0.0/16"
+public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnet_cidrs = ["10.0.11.0/24", "10.0.12.0/24"]
+availability_zones   = ["ap-northeast-2a", "ap-northeast-2c"]
+
+# EC2 키페어 이름 (AWS 콘솔에서 미리 생성 필요)
+key_pair_name = "your-key-pair-name"
+
+nat_instance_type     = "t3.micro"
+bastion_instance_type = "t3.micro"
+bastion_allowed_cidr  = "0.0.0.0/0" # 실제 운영 시 본인 IP로 변경
+
+ecs_task_cpu      = 256
+ecs_task_memory   = 512
+ecs_desired_count = 1
+container_port    = 8080
+
+redis_instance_type = "t3.small"
+mysql_instance_type = "t3.micro"
+mysql_root_password = "your-secure-password"
+
+# S3 버킷 이름은 전역 고유값이어야 함
+s3_bucket_name = "your-project-assets-dev"
+
+# Route53에서 미리 도메인 등록 후 확인
+domain_name    = "yourdomain.com"
+hosted_zone_id = "Z0000000000000000000"
+
+app_secrets = {
+  DB_HOST    = "10.0.11.10"
+  DB_PORT    = "3306"
+  DB_NAME    = "appdb"
+  REDIS_HOST = "10.0.11.20"
+  JWT_SECRET = "your-jwt-secret-key"
+}

@@ -1,0 +1,53 @@
+name: Terraform Security Review
+
+on:
+  pull_request:
+    paths:
+      - "**.tf"
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  tf-security-review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install tfsec
+        run: |
+          curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+
+      - name: Run tfsec
+        run: tfsec . --format json --soft-fail > tfsec-results.json || true
+
+      - name: Get Terraform diff
+        run: |
+          git diff origin/${{ github.base_ref }}...HEAD -- '*.tf' > tf.diff
+
+      - name: Claude Security Review
+        id: review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          REVIEW=$(python3 .github/scripts/claude_review.py)
+          echo "result<<EOF" >> $GITHUB_OUTPUT
+          echo "$REVIEW" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post PR Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## 🔒 Terraform 보안 자동 리뷰\n\n> tfsec 정적 분석 + Claude AI 분석\n\n${{ steps.review.outputs.result }}`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
