@@ -1,0 +1,68 @@
+name: Terraform Security Review
+
+on:
+  pull_request:
+    paths:
+      - "**.tf"
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  tf-security-review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install tfsec
+        run: |
+          curl -sL https://github.com/aquasecurity/tfsec/releases/download/v1.28.11/tfsec-linux-amd64 -o /usr/local/bin/tfsec
+          chmod +x /usr/local/bin/tfsec
+
+      - name: Run tfsec
+        run: tfsec . --format json --soft-fail > tfsec-results.json || true
+
+      - name: Parse tfsec results
+        id: tfsec
+        run: |
+          COUNT=$(python3 -c "
+          import json, sys
+          with open('tfsec-results.json') as f:
+              data = json.load(f)
+          results = data.get('results', []) or []
+          if not results:
+              print('✅ 발견된 보안 이슈 없음')
+              sys.exit(0)
+          lines = []
+          for r in results:
+              sev = r.get('severity', 'UNKNOWN')
+              rule = r.get('rule_id', '')
+              desc = r.get('description', '')
+              loc = r.get('location', {})
+              fname = loc.get('filename', '')
+              lineno = loc.get('start_line', '')
+              lines.append(f'| {sev} | {rule} | {desc} | {fname}:{lineno} |')
+          header = '| 심각도 | Rule | 설명 | 위치 |\n|--------|------|------|------|\n'
+          print(header + chr(10).join(lines))
+          ")
+          echo "table<<EOF" >> $GITHUB_OUTPUT
+          echo "$COUNT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post PR Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const table = `${{ steps.tfsec.outputs.table }}`;
+            const body = `## 🔒 Terraform 보안 스캔 결과 (tfsec)\n\n${table}\n\n> 자동 스캔 by [tfsec](https://github.com/aquasecurity/tfsec)`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
