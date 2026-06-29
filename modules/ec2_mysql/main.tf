@@ -4,7 +4,7 @@ data "aws_ami" "al2023" {
 
   filter {
     name   = "name"
-    values = ["al2023-ami-*-x86_64"]
+    values = ["al2023-ami-*-arm64"]
   }
 }
 
@@ -64,7 +64,9 @@ resource "aws_instance" "mysql" {
   }
 
   root_block_device {
-    encrypted = true
+    volume_size = 30
+    volume_type = "gp3"
+    encrypted   = true
   }
 
   tags = { Name = "${var.project_name}-${var.environment}-mysql" }

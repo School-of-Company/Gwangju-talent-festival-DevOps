@@ -38,6 +38,7 @@ resource "aws_lambda_function" "main" {
   handler          = "index.handler"
   runtime          = "python3.12"
   timeout          = 60
+  architectures    = ["arm64"]
 
   tracing_config {
     mode = "Active"

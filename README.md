@@ -72,3 +72,4 @@ terraform apply
 - `terraform.tfvars`는 `.gitignore`에 포함됨 — 커밋하지 말 것
 - `bastion_allowed_cidr`는 운영 시 본인 IP로 변경 권장
 - MySQL/Redis는 EC2 기반 (비용 절감 목적), 운영 환경에서는 RDS/ElastiCache 검토
+
