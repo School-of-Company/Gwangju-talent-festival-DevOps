@@ -52,9 +52,9 @@ resource "aws_instance" "mysql" {
     systemctl start mysqld
     systemctl enable mysqld
     mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${var.mysql_root_password}';"
-    mysql -u root -p'${var.mysql_root_password}' -e "CREATE DATABASE IF NOT EXISTS appdb;"
-    mysql -u root -p'${var.mysql_root_password}' -e "CREATE USER IF NOT EXISTS 'appuser'@'%' IDENTIFIED BY '${var.mysql_root_password}';"
-    mysql -u root -p'${var.mysql_root_password}' -e "GRANT ALL PRIVILEGES ON appdb.* TO 'appuser'@'%'; FLUSH PRIVILEGES;"
+    mysql -u root -p'${var.mysql_root_password}' -e "CREATE DATABASE IF NOT EXISTS gwangjutalentfestival;"
+    mysql -u root -p'${var.mysql_root_password}' -e "CREATE USER IF NOT EXISTS 's25026@gsm.hs.kr'@'%' IDENTIFIED BY '${var.mysql_root_password}';"
+    mysql -u root -p'${var.mysql_root_password}' -e "GRANT ALL PRIVILEGES ON gwangjutalentfestival.* TO 's25026@gsm.hs.kr'@'%'; FLUSH PRIVILEGES;"
   EOF
 
   metadata_options {
