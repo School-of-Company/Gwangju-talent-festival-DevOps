@@ -55,7 +55,7 @@ resource "aws_lb_target_group" "main" {
 
 resource "aws_acm_certificate" "main" {
   domain_name       = var.domain_name
-  validation_method = "DNS"
+  validation_method = "EMAIL"
 
   lifecycle {
     create_before_destroy = true
