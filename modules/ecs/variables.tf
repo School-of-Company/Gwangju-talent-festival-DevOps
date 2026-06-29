@@ -51,3 +51,8 @@ variable "secret_keys" {
   type        = list(string)
   default     = []
 }
+variable "extra_secret_keys" {
+  description = "tfvars 외부에서 추가할 시크릿 키 목록 (예: GOOGLE_SHEETS_ACCOUNT_CREDENTIAL)"
+  type        = list(string)
+  default     = []
+}

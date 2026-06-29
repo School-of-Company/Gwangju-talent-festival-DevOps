@@ -86,7 +86,7 @@ resource "aws_ecs_task_definition" "app" {
       containerPort = var.container_port
       protocol      = "tcp"
     }]
-    secrets = [for key in var.secret_keys : {
+    secrets = [for key in concat(var.secret_keys, var.extra_secret_keys) : {
       name      = key
       valueFrom = "${var.secrets_arn}:${key}::"
     }]
