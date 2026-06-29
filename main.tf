@@ -58,8 +58,6 @@ module "alb" {
   vpc_id            = module.vpc.vpc_id
   public_subnet_ids = module.vpc.public_subnet_ids
   container_port    = var.container_port
-  domain_name       = var.domain_name
-  hosted_zone_id    = var.hosted_zone_id
 }
 
 module "ecs" {
