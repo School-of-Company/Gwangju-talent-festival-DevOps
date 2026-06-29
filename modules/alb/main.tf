@@ -79,12 +79,17 @@ resource "aws_acm_certificate" "main" {
 #   zone_id         = var.hosted_zone_id
 # }
 
+# DNS 레코드는 등록업체에서 수동 추가 — 여기서는 ISSUED 상태까지 대기만 함
+resource "aws_acm_certificate_validation" "main" {
+  certificate_arn = aws_acm_certificate.main.arn
+}
+
 resource "aws_lb_listener" "https" {
   load_balancer_arn = aws_lb.main.arn
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  certificate_arn   = aws_acm_certificate.main.arn
+  certificate_arn   = aws_acm_certificate_validation.main.certificate_arn
 
   default_action {
     type             = "forward"
