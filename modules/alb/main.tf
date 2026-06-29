@@ -62,26 +62,26 @@ resource "aws_acm_certificate" "main" {
   }
 }
 
-resource "aws_route53_record" "cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.main.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
+# 네임서버가 Route53으로 위임된 후 아래 주석 해제하면 자동 검증됨
+# resource "aws_route53_record" "cert_validation" {
+#   for_each = {
+#     for dvo in aws_acm_certificate.main.domain_validation_options : dvo.domain_name => {
+#       name   = dvo.resource_record_name
+#       record = dvo.resource_record_value
+#       type   = dvo.resource_record_type
+#     }
+#   }
+#   allow_overwrite = true
+#   name            = each.value.name
+#   records         = [each.value.record]
+#   ttl             = 60
+#   type            = each.value.type
+#   zone_id         = var.hosted_zone_id
+# }
 
-  allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = var.hosted_zone_id
-}
-
+# DNS 레코드는 등록업체에서 수동 추가 — 여기서는 ISSUED 상태까지 대기만 함
 resource "aws_acm_certificate_validation" "main" {
-  certificate_arn         = aws_acm_certificate.main.arn
-  validation_record_fqdns = [for r in aws_route53_record.cert_validation : r.fqdn]
+  certificate_arn = aws_acm_certificate.main.arn
 }
 
 resource "aws_lb_listener" "https" {

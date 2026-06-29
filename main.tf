@@ -72,6 +72,7 @@ module "ecs" {
   alb_sg_id            = module.alb.alb_sg_id
   ecr_repository_url   = module.ecr.repository_url
   secrets_arn          = module.secrets_manager.secrets_arn
+  secret_keys          = keys(var.app_secrets)
   container_port       = var.container_port
   cpu                  = var.ecs_task_cpu
   memory               = var.ecs_task_memory

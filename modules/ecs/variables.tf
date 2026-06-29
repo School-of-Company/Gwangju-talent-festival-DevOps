@@ -46,3 +46,8 @@ variable "desired_count" {
   description = "유지할 태스크 수"
   type        = number
 }
+variable "secret_keys" {
+  description = "Secrets Manager에서 컨테이너에 주입할 환경변수 키 목록"
+  type        = list(string)
+  default     = []
+}

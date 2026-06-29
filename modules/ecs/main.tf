@@ -86,13 +86,10 @@ resource "aws_ecs_task_definition" "app" {
       containerPort = var.container_port
       protocol      = "tcp"
     }]
-    secrets = [
-      { name = "DB_HOST", valueFrom = "${var.secrets_arn}:DB_HOST::" },
-      { name = "DB_PORT", valueFrom = "${var.secrets_arn}:DB_PORT::" },
-      { name = "DB_NAME", valueFrom = "${var.secrets_arn}:DB_NAME::" },
-      { name = "REDIS_HOST", valueFrom = "${var.secrets_arn}:REDIS_HOST::" },
-      { name = "JWT_SECRET", valueFrom = "${var.secrets_arn}:JWT_SECRET::" }
-    ]
+    secrets = [for key in var.secret_keys : {
+      name      = key
+      valueFrom = "${var.secrets_arn}:${key}::"
+    }]
     logConfiguration = {
       logDriver = "awslogs"
       options = {
