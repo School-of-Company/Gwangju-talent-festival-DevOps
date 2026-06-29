@@ -51,7 +51,7 @@ resource "aws_instance" "redis" {
     dnf install -y redis6
     systemctl start redis6
     systemctl enable redis6
-    sed -i 's/^bind 127.0.0.1/bind 0.0.0.0/' /etc/redis6.conf
+    sed -i 's/^bind 127.0.0.1/bind 0.0.0.0/' /etc/redis6/redis6.conf
     systemctl restart redis6
   EOF
 
