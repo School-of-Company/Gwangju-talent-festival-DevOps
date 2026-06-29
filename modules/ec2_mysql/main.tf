@@ -48,9 +48,9 @@ resource "aws_instance" "mysql" {
 
   user_data = <<-EOF
     #!/bin/bash
-    dnf install -y mysql-server
-    systemctl start mysqld
-    systemctl enable mysqld
+    dnf install -y mariadb105-server
+    systemctl start mariadb
+    systemctl enable mariadb
     mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${var.mysql_root_password}';"
     mysql -u root -p'${var.mysql_root_password}' -e "CREATE DATABASE IF NOT EXISTS gwangjutalentfestival;"
     mysql -u root -p'${var.mysql_root_password}' -e "CREATE USER IF NOT EXISTS 's25026@gsm.hs.kr'@'%' IDENTIFIED BY '${var.mysql_root_password}';"

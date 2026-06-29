@@ -43,7 +43,7 @@ resource "aws_instance" "nat" {
     echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
     sysctl -p
     dnf install -y iptables
-    iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+    iptables -t nat -A POSTROUTING -o ens5 -j MASQUERADE
     iptables-save > /etc/iptables.rules
     cat > /etc/systemd/system/iptables-restore.service << 'SVCEOF'
     [Unit]
