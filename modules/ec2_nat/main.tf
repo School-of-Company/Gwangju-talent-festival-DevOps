@@ -42,10 +42,22 @@ resource "aws_instance" "nat" {
     #!/bin/bash
     echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
     sysctl -p
-    yum install -y iptables-services
+    dnf install -y iptables
     iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-    service iptables save
-    systemctl enable iptables
+    iptables-save > /etc/iptables.rules
+    cat > /etc/systemd/system/iptables-restore.service << 'SVCEOF'
+    [Unit]
+    Description=Restore iptables NAT rules
+    Before=network-pre.target
+    Wants=network-pre.target
+    [Service]
+    Type=oneshot
+    ExecStart=/sbin/iptables-restore /etc/iptables.rules
+    RemainAfterExit=yes
+    [Install]
+    WantedBy=multi-user.target
+    SVCEOF
+    systemctl enable --now iptables-restore
   EOF
 
   metadata_options {
