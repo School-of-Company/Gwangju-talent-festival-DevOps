@@ -73,7 +73,7 @@ variable "container_port" {
 variable "redis_instance_type" {
   description = "Redis EC2 인스턴스 타입"
   type        = string
-  default     = "t4g.nano"
+  default     = "t4g.micro"
 }
 variable "mysql_instance_type" {
   description = "MySQL EC2 인스턴스 타입"
