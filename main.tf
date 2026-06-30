@@ -52,12 +52,13 @@ module "s3" {
 }
 
 module "alb" {
-  source            = "./modules/alb"
-  project_name      = var.project_name
-  environment       = var.environment
-  vpc_id            = module.vpc.vpc_id
-  public_subnet_ids = module.vpc.public_subnet_ids
-  container_port    = var.container_port
+  source              = "./modules/alb"
+  project_name        = var.project_name
+  environment         = var.environment
+  vpc_id              = module.vpc.vpc_id
+  public_subnet_ids   = module.vpc.public_subnet_ids
+  container_port      = var.container_port
+  acm_certificate_arn = "arn:aws:acm:ap-northeast-2:879204766191:certificate/49810aa5-1b30-4eb9-9b50-6f770eaff120"
 }
 
 module "ecs" {

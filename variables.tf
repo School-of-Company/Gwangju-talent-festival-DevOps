@@ -38,12 +38,12 @@ variable "key_pair_name" {
 variable "nat_instance_type" {
   description = "NAT EC2 인스턴스 타입"
   type        = string
-  default     = "t4g.nano"
+  default     = "t3.micro"
 }
 variable "bastion_instance_type" {
   description = "Bastion EC2 인스턴스 타입"
   type        = string
-  default     = "t4g.nano"
+  default     = "t3.micro"
 }
 variable "bastion_allowed_cidr" {
   description = "Bastion SSH 허용 IP 대역"
@@ -73,12 +73,12 @@ variable "container_port" {
 variable "redis_instance_type" {
   description = "Redis EC2 인스턴스 타입"
   type        = string
-  default     = "t4g.micro"
+  default     = "t3.micro"
 }
 variable "mysql_instance_type" {
   description = "MySQL EC2 인스턴스 타입"
   type        = string
-  default     = "t4g.micro"
+  default     = "t3.micro"
 }
 variable "mysql_root_password" {
   description = "MySQL root 초기 비밀번호"

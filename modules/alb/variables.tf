@@ -22,3 +22,8 @@ variable "container_port" {
   description = "컨테이너 앱 포트 (헬스체크 타겟)"
   type        = number
 }
+
+variable "acm_certificate_arn" {
+  description = "ACM 인증서 ARN"
+  type        = string
+}
