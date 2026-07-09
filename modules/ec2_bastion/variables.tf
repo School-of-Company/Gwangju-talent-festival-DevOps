@@ -25,4 +25,5 @@ variable "key_pair_name" {
 variable "allowed_cidr" {
   description = "SSH 접근을 허용할 IP 대역"
   type        = string
+  default     = "0.0.0.0/0"
 }
