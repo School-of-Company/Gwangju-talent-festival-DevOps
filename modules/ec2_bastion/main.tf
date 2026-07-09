@@ -8,6 +8,31 @@ data "aws_ami" "al2023" {
   }
 }
 
+resource "aws_iam_role" "bastion" {
+  name = "${var.project_name}-${var.environment}-bastion-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "bastion_ssm" {
+  role       = aws_iam_role.bastion.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "bastion" {
+  name = "${var.project_name}-${var.environment}-bastion-profile"
+  role = aws_iam_role.bastion.name
+}
+
 resource "aws_security_group" "bastion" {
   name        = "${var.project_name}-${var.environment}-bastion-sg"
   description = "Bastion host security group"
@@ -36,6 +61,16 @@ resource "aws_instance" "bastion" {
   subnet_id              = var.public_subnet_id
   key_name               = var.key_pair_name
   vpc_security_group_ids = [aws_security_group.bastion.id]
+  iam_instance_profile   = aws_iam_instance_profile.bastion.name
+
+  user_data = base64encode(<<-EOF
+    #!/bin/bash
+    yum update -y
+    yum install -y amazon-ssm-agent
+    systemctl enable amazon-ssm-agent
+    systemctl start amazon-ssm-agent
+  EOF
+  )
 
   metadata_options {
     http_endpoint               = "enabled"
