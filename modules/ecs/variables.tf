@@ -56,3 +56,18 @@ variable "extra_secret_keys" {
   type        = list(string)
   default     = []
 }
+variable "autoscaling_min_capacity" {
+  description = "오토스케일링 최소 태스크 수"
+  type        = number
+  default     = 1
+}
+variable "autoscaling_max_capacity" {
+  description = "오토스케일링 최대 태스크 수"
+  type        = number
+  default     = 6
+}
+variable "autoscaling_target_cpu" {
+  description = "오토스케일링 목표 CPU 사용률(%)"
+  type        = number
+  default     = 50
+}

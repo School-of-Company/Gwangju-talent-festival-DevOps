@@ -76,9 +76,34 @@ variable "redis_instance_type" {
   default     = "t3.micro"
 }
 variable "mysql_instance_type" {
-  description = "MySQL EC2 인스턴스 타입"
+  description = "MySQL EC2 인스턴스 타입 (8/20 티켓 예매 대비 t3.medium으로 상향)"
   type        = string
-  default     = "t3.micro"
+  default     = "t3.medium"
+}
+variable "elasticache_node_type" {
+  description = "ElastiCache Redis 노드 타입"
+  type        = string
+  default     = "cache.t4g.micro"
+}
+variable "waf_rate_limit_per_ip" {
+  description = "WAF: IP당 5분간 허용 요청 수"
+  type        = number
+  default     = 1000
+}
+variable "ecs_autoscaling_min_capacity" {
+  description = "ECS 오토스케일링 최소 태스크 수"
+  type        = number
+  default     = 1
+}
+variable "ecs_autoscaling_max_capacity" {
+  description = "ECS 오토스케일링 최대 태스크 수"
+  type        = number
+  default     = 6
+}
+variable "ecs_autoscaling_target_cpu" {
+  description = "ECS 오토스케일링 목표 CPU 사용률(%)"
+  type        = number
+  default     = 50
 }
 variable "mysql_root_password" {
   description = "MySQL root 초기 비밀번호"

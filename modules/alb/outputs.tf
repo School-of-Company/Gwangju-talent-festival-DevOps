@@ -17,3 +17,8 @@ output "alb_sg_id" {
   description = "ALB 보안 그룹 ID (ECS SG에서 참조)"
   value       = aws_security_group.alb.id
 }
+
+output "alb_arn" {
+  description = "ALB ARN (WAF WebACL 연결에 사용)"
+  value       = aws_lb.main.arn
+}
