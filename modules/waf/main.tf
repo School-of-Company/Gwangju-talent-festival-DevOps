@@ -11,8 +11,11 @@ resource "aws_wafv2_web_acl" "main" {
     name     = "RateLimitPerIp"
     priority = 0
 
+    # 프록시(Vercel)가 X-Forwarded-For를 전달하지 않아 모든 요청이 단일 egress IP로 보임.
+    # block으로 두면 실사용자 전체가 하나의 IP로 묶여 차단되므로, 프록시가 원본 IP를
+    # 전달하도록 고치기 전까지는 count로 감시만 한다.
     action {
-      block {}
+      count {}
     }
 
     statement {
@@ -41,6 +44,17 @@ resource "aws_wafv2_web_acl" "main" {
       managed_rule_group_statement {
         vendor_name = "AWS"
         name        = "AWSManagedRulesCommonRuleSet"
+
+        # SizeRestrictions_BODY는 본문 8KB 초과 시 고정 차단(임계값 조정 불가).
+        # 필기 저장 등 정상 요청이 걸려 count로 내림. 본문 크기 제한은
+        # 백엔드 JudgeStrokesProperties(judge.strokes.max-bytes)가 대신 담당하고,
+        # 나머지 서브룰(XSS/RFI 등)은 그대로 차단 모드로 유지.
+        rule_action_override {
+          name = "SizeRestrictions_BODY"
+          action_to_use {
+            count {}
+          }
+        }
       }
     }
 
